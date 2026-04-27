@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cabinet of Dreams</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <video autoplay muted loop playsinline>
+    <source src="Picnic Video Background.mp4" type="video/mp4">
+  </video>
+  <img class="gif-overlay" src="sleeping character picnic 4.gif" alt="">
+  <img class="gif-overlay" src="sleepingcharacterpicnic1.gif" alt="">
+  <img class="gif-overlay" src="sleepingcharacterpicnic2.gif" alt="">
+  <img class="gif-overlay" src="sleepingcharacterpicnic33.gif" alt="">
+  <audio id="ambience" loop>
+    <source src="Summertime Ambience--ambience_birds_chirping_summer.mp3" type="audio/mpeg">
+  </audio>
+  <button id="unmute-btn" onclick="document.getElementById('ambience').play(); this.style.display='none';">
+    ▶ Play Ambience
+  </button>
+
+  <div id="video-modal">
+    <div id="modal-overlay"></div>
+    <div id="modal-container">
+      <video id="modal-video" loop playsinline></video>
+    </div>
+  </div>
+
+  <script>
+    const canvasCache = new Map();
+    let modalOpen = false;
+
+    document.querySelectorAll('.gif-overlay').forEach(img => {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d', { willReadFrequently: true });
+      canvasCache.set(img, { canvas, ctx });
+    });
+
+    function sampleAlpha(img, clientX, clientY) {
+      const { canvas, ctx } = canvasCache.get(img);
+      canvas.width = img.naturalWidth;
+      canvas.height = img.naturalHeight;
+      ctx.drawImage(img, 0, 0);
+      const rect = img.getBoundingClientRect();
+      const x = Math.floor((clientX - rect.left) * (img.naturalWidth / rect.width));
+      const y = Math.floor((clientY - rect.top) * (img.naturalHeight / rect.height));
+      return ctx.getImageData(x, y, 1, 1).data[3];
+    }
+
+    document.addEventListener('mousemove', (e) => {
+      if (modalOpen) return;
+      canvasCache.forEach(({ canvas, ctx }, img) => {
+        const alpha = sampleAlpha(img, e.clientX, e.clientY);
+        img.classList.toggle('glow', alpha > 10);
+      });
+    });
+
+    document.addEventListener('mouseleave', () => {
+      document.querySelectorAll('.gif-overlay').forEach(img => img.classList.remove('glow'));
+    });
+
+    // Modal logic
+    const modal = document.getElementById('video-modal');
+    const modalContainer = document.getElementById('modal-container');
+    const modalOverlay = document.getElementById('modal-overlay');
+    const modalVideo = document.getElementById('modal-video');
+    const gif33 = document.querySelector('img[src="sleepingcharacterpicnic33.gif"]');
+    const gif4 = document.querySelector('img[src="sleeping character picnic 4.gif"]');
+    const gif2 = document.querySelector('img[src="sleepingcharacterpicnic2.gif"]');
+
+    document.addEventListener('click', (e) => {
+      if (modalOpen) return;
+      if (sampleAlpha(gif33, e.clientX, e.clientY) > 10) {
+        openModal('Dream Cabinet Carly Final.mp4');
+      } else if (sampleAlpha(gif4, e.clientX, e.clientY) > 10) {
+        openModal('BodyDysphoria_InteractiveAnimation.mp4');
+      } else if (sampleAlpha(gif2, e.clientX, e.clientY) > 10) {
+        openModal('DreamCabinet_finalv3.mp4');
+      }
+    });
+
+    const ambience = document.getElementById('ambience');
+
+    function openModal(src) {
+      modalVideo.src = src;
+      modalOpen = true;
+      ambience.pause();
+      document.querySelectorAll('.gif-overlay').forEach(img => img.style.visibility = 'hidden');
+      modal.style.display = 'flex';
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          modalContainer.classList.add('expanded');
+        });
+      });
+      modalContainer.addEventListener('transitionend', () => {
+        modalVideo.play();
+      }, { once: true });
+    }
+
+    function closeModal() {
+      modalVideo.pause();
+      modalVideo.currentTime = 0;
+      modalContainer.classList.remove('expanded');
+      modalContainer.addEventListener('transitionend', () => {
+        modal.style.display = 'none';
+        document.querySelectorAll('.gif-overlay').forEach(img => img.style.visibility = 'visible');
+        ambience.play();
+        modalOpen = false;
+      }, { once: true });
+    }
+
+    modalOverlay.addEventListener('click', closeModal);
+  </script>
+</body>
+</html>
