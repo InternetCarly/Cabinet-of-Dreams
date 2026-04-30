@@ -17,20 +17,27 @@
   <audio id="ambience" loop>
     <source src="Summertime Ambience--ambience_birds_chirping_summer.mp3" type="audio/mpeg">
   </audio>
-  <button id="unmute-btn" onclick="document.getElementById('ambience').play(); this.style.display='none';">
-    ▶ Play Ambience
-  </button>
 
   <div id="video-modal">
     <div id="modal-overlay"></div>
     <div id="modal-container">
       <video id="modal-video" loop playsinline></video>
     </div>
+    <button id="modal-close" onclick="closeModal()">✕</button>
+  </div>
+
+  <div id="splash">
+    <div id="splash-overlay"></div>
+    <div id="splash-content">
+      <img id="splash-logo" src="CabinetOfDreams_Logo.PNG" alt="Cabinet of Dreams">
+      <p id="splash-enter">ENTER</p>
+    </div>
   </div>
 
   <script>
     const canvasCache = new Map();
     let modalOpen = false;
+    const ambience = document.getElementById('ambience');
 
     document.querySelectorAll('.gif-overlay').forEach(img => {
       const canvas = document.createElement('canvas');
@@ -51,7 +58,7 @@
 
     document.addEventListener('mousemove', (e) => {
       if (modalOpen) return;
-      canvasCache.forEach(({ canvas, ctx }, img) => {
+      canvasCache.forEach((_, img) => {
         const alpha = sampleAlpha(img, e.clientX, e.clientY);
         img.classList.toggle('glow', alpha > 10);
       });
@@ -59,6 +66,14 @@
 
     document.addEventListener('mouseleave', () => {
       document.querySelectorAll('.gif-overlay').forEach(img => img.classList.remove('glow'));
+    });
+
+    // Splash screen
+    const splash = document.getElementById('splash');
+    document.getElementById('splash-content').addEventListener('click', () => {
+      ambience.play();
+      splash.classList.add('hiding');
+      splash.addEventListener('transitionend', () => splash.remove(), { once: true });
     });
 
     // Modal logic
@@ -71,7 +86,7 @@
     const gif2 = document.querySelector('img[src="sleepingcharacterpicnic2.gif"]');
 
     document.addEventListener('click', (e) => {
-      if (modalOpen) return;
+      if (modalOpen || document.getElementById('splash')) return;
       if (sampleAlpha(gif33, e.clientX, e.clientY) > 10) {
         openModal('Dream Cabinet Carly Final.mp4');
       } else if (sampleAlpha(gif4, e.clientX, e.clientY) > 10) {
@@ -80,8 +95,6 @@
         openModal('DreamCabinet_finalv3.mp4');
       }
     });
-
-    const ambience = document.getElementById('ambience');
 
     function openModal(src) {
       modalVideo.src = src;
