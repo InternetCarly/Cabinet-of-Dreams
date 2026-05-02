@@ -35,10 +35,20 @@
     <img id="play-btn" src="playbutton_0000_Layer-4.png" alt="Play">
   </div>
 
+  <div id="outro">
+    <video id="outro-video" playsinline>
+      <source src="DreamCabinet_Outro.mp4" type="video/mp4">
+    </video>
+    <img id="play-again-btn" src="playAgainButton.png" alt="Play Again">
+  </div>
+
   <script>
     const canvasCache = new Map();
     let modalOpen = false;
     const ambience = document.getElementById('ambience');
+    const watchedDreams = new Set();
+    let currentDreamKey = null;
+    const TOTAL_DREAMS = 3;
 
     document.querySelectorAll('.gif-overlay').forEach(img => {
       const canvas = document.createElement('canvas');
@@ -104,15 +114,16 @@
     document.addEventListener('click', (e) => {
       if (modalOpen || document.getElementById('intro')) return;
       if (sampleAlpha(gif33, e.clientX, e.clientY) > 10) {
-        openModal('Dream Cabinet Carly Final.mp4');
+        openModal('Dream Cabinet Carly Final.mp4', 'carly');
       } else if (sampleAlpha(gif4, e.clientX, e.clientY) > 10) {
-        openModal('BodyDysphoria_InteractiveAnimation.mp4');
+        openModal('BodyDysphoria_InteractiveAnimation.mp4', 'body');
       } else if (sampleAlpha(gif2, e.clientX, e.clientY) > 10) {
-        openModal('DreamCabinet_finalv3.mp4');
+        openModal('DreamCabinet_finalv3.mp4', 'final');
       }
     });
 
-    function openModal(src) {
+    function openModal(src, dreamKey) {
+      currentDreamKey = dreamKey;
       const hint = document.getElementById('hint');
       if (hint) hint.classList.remove('visible');
       modalVideo.src = src;
@@ -137,10 +148,36 @@
       modalContainer.addEventListener('transitionend', () => {
         modal.style.display = 'none';
         document.querySelectorAll('.gif-overlay').forEach(img => img.style.visibility = 'visible');
-        ambience.play();
         modalOpen = false;
+
+        if (currentDreamKey) {
+          watchedDreams.add(currentDreamKey);
+          currentDreamKey = null;
+        }
+
+        if (watchedDreams.size >= TOTAL_DREAMS) {
+          playOutro();
+        } else {
+          ambience.play();
+        }
       }, { once: true });
     }
+
+    function playOutro() {
+      const outro = document.getElementById('outro');
+      const outroVideo = document.getElementById('outro-video');
+      requestAnimationFrame(() => {
+        outro.classList.add('visible');
+        outroVideo.play();
+      });
+      outroVideo.addEventListener('ended', () => {
+        document.getElementById('play-again-btn').classList.add('visible');
+      }, { once: true });
+    }
+
+    document.getElementById('play-again-btn').addEventListener('click', () => {
+      location.reload();
+    });
 
     modalOverlay.addEventListener('click', closeModal);
   </script>

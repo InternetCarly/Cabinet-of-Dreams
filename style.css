@@ -90,6 +90,49 @@ html, body {
   transform: translate(-50%, -50%) scale(1.15);
 }
 
+/* Outro screen */
+#outro {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.8s ease;
+}
+
+#outro.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+#outro-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+#play-again-btn {
+  position: absolute;
+  top: 76%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 230px;
+  cursor: pointer;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.8s ease, transform 0.25s ease;
+}
+
+#play-again-btn.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+#play-again-btn:hover {
+  transform: translate(-50%, -50%) scale(1.15);
+}
+
 /* Video modal */
 #video-modal {
   display: none;
