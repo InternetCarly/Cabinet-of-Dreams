@@ -12,6 +12,16 @@ html, body {
   background: #000;
 }
 
+#bg-video {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  min-width: 100%;
+  min-height: 100%;
+  transform: translate(-50%, -50%);
+  object-fit: cover;
+}
+
 .gif-overlay {
   position: fixed;
   top: 0;
@@ -27,67 +37,60 @@ html, body {
   filter: drop-shadow(0 0 5px rgb(212, 255, 0)) drop-shadow(0 0 7px rgb(0, 247, 255));
 }
 
-#splash {
+/* Hint text */
+#hint {
   position: fixed;
-  inset: 0;
-  z-index: 100;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: opacity 0.6s ease;
+  top: 24px;
+  left: 24px;
+  z-index: 10;
+  color: #fff;
+  font-family: Consolas, monospace;
+  font-size: 1.5rem;
+  text-shadow: 1px 1px 4px #000, 0 0 8px #000;
+  opacity: 0;
+  transition: opacity 0.8s ease;
+  pointer-events: none;
 }
 
-#splash.hiding {
+#hint.visible {
+  opacity: 1;
+}
+
+/* Intro screen */
+#intro {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  transition: opacity 0.8s ease;
+}
+
+#intro.hiding {
   opacity: 0;
   pointer-events: none;
 }
 
-#splash-overlay {
+#intro-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+#play-btn {
   position: absolute;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.8);
-}
-
-#splash-content {
-  position: relative;
-  z-index: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  top: 76%;
+  left: 51%;
+  transform: translate(-50%, -50%);
+  width: 230px;
   cursor: pointer;
-  animation: float 3.5s ease-in-out infinite;
+  transition: transform 0.25s ease;
 }
 
-#splash-logo {
-  width: 70vw;
-  max-height: 70vh;
-  object-fit: contain;
-  transition: transform 0.3s ease;
+#play-btn:hover {
+  transform: translate(-50%, -50%) scale(1.15);
 }
 
-#splash-content:hover #splash-logo {
-  transform: scale(1.05);
-}
-
-#splash-enter {
-  color: rgb(255, 251, 0);
-  font-size: 1.6rem;
-  letter-spacing: 0.1em;
-  margin-top: 20px;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  font-family: Arial, sans-serif;
-}
-
-#splash-content:hover #splash-enter {
-  opacity: 1;
-}
-
-@keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-18px); }
-}
-
+/* Video modal */
 #video-modal {
   display: none;
   position: fixed;
@@ -145,34 +148,5 @@ html, body {
   height: 100%;
   object-fit: contain;
   display: block;
-}
-
-#unmute-btn {
-  position: fixed;
-  bottom: 24px;
-  right: 24px;
-  z-index: 10;
-  padding: 10px 18px;
-  background: rgba(0, 0, 0, 0.5);
-  color: #fff;
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  border-radius: 24px;
-  font-size: 14px;
-  cursor: pointer;
-  backdrop-filter: blur(6px);
-  transition: background 0.2s;
-}
-
-#unmute-btn:hover {
-  background: rgba(0, 0, 0, 0.75);
-}
-
-video {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  min-width: 100%;
-  min-height: 100%;
-  transform: translate(-50%, -50%);
-  object-fit: cover;
+  position: relative;
 }

@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <video autoplay muted loop playsinline>
+  <video id="bg-video" autoplay muted loop playsinline>
     <source src="Picnic Video Background.mp4" type="video/mp4">
   </video>
   <img class="gif-overlay" src="sleeping character picnic 4.gif" alt="">
@@ -26,12 +26,13 @@
     <button id="modal-close" onclick="closeModal()">✕</button>
   </div>
 
-  <div id="splash">
-    <div id="splash-overlay"></div>
-    <div id="splash-content">
-      <img id="splash-logo" src="CabinetOfDreams_Logo.PNG" alt="Cabinet of Dreams">
-      <p id="splash-enter">ENTER</p>
-    </div>
+  <p id="hint">Click on a character to see inside their dream.</p>
+
+  <div id="intro">
+    <video id="intro-video" preload="auto" playsinline>
+      <source src="DreamCabinet_Intro.mp4" type="video/mp4">
+    </video>
+    <img id="play-btn" src="playbutton_0000_Layer-4.png" alt="Play">
   </div>
 
   <script>
@@ -68,12 +69,27 @@
       document.querySelectorAll('.gif-overlay').forEach(img => img.classList.remove('glow'));
     });
 
-    // Splash screen
-    const splash = document.getElementById('splash');
-    document.getElementById('splash-content').addEventListener('click', () => {
+    // Intro screen
+    const intro = document.getElementById('intro');
+    const introVideo = document.getElementById('intro-video');
+    const playBtn = document.getElementById('play-btn');
+
+    introVideo.addEventListener('loadedmetadata', () => {
+      introVideo.currentTime = 0.01;
+    });
+
+    playBtn.addEventListener('click', () => {
+      playBtn.style.display = 'none';
       ambience.play();
-      splash.classList.add('hiding');
-      splash.addEventListener('transitionend', () => splash.remove(), { once: true });
+      introVideo.play();
+    });
+
+    introVideo.addEventListener('ended', () => {
+      intro.classList.add('hiding');
+      intro.addEventListener('transitionend', () => {
+        intro.remove();
+        setTimeout(() => document.getElementById('hint').classList.add('visible'), 400);
+      }, { once: true });
     });
 
     // Modal logic
@@ -86,7 +102,7 @@
     const gif2 = document.querySelector('img[src="sleepingcharacterpicnic2.gif"]');
 
     document.addEventListener('click', (e) => {
-      if (modalOpen || document.getElementById('splash')) return;
+      if (modalOpen || document.getElementById('intro')) return;
       if (sampleAlpha(gif33, e.clientX, e.clientY) > 10) {
         openModal('Dream Cabinet Carly Final.mp4');
       } else if (sampleAlpha(gif4, e.clientX, e.clientY) > 10) {
@@ -97,6 +113,8 @@
     });
 
     function openModal(src) {
+      const hint = document.getElementById('hint');
+      if (hint) hint.classList.remove('visible');
       modalVideo.src = src;
       modalOpen = true;
       ambience.pause();
