@@ -48,7 +48,7 @@
     const ambience = document.getElementById('ambience');
     const watchedDreams = new Set();
     let currentDreamKey = null;
-    const TOTAL_DREAMS = 3;
+    const TOTAL_DREAMS = 4;
 
     document.querySelectorAll('.gif-overlay').forEach(img => {
       const canvas = document.createElement('canvas');
@@ -110,6 +110,7 @@
     const gif33 = document.querySelector('img[src="sleepingcharacterpicnic33.gif"]');
     const gif4 = document.querySelector('img[src="sleeping character picnic 4.gif"]');
     const gif2 = document.querySelector('img[src="sleepingcharacterpicnic2.gif"]');
+    const gif1 = document.querySelector('img[src="sleepingcharacterpicnic1.gif"]');
 
     document.addEventListener('click', (e) => {
       if (modalOpen || document.getElementById('intro')) return;
@@ -119,6 +120,8 @@
         openModal('BodyDysphoria_InteractiveAnimation.mp4', 'body');
       } else if (sampleAlpha(gif2, e.clientX, e.clientY) > 10) {
         openModal('DreamCabinet_finalv3.mp4', 'final');
+      } else if (sampleAlpha(gif1, e.clientX, e.clientY) > 10) {
+        openModal('mollydream.mp4', 'molly');
       }
     });
 
