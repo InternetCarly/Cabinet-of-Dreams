@@ -94,6 +94,19 @@
       introVideo.play();
     });
 
+    document.addEventListener('keydown', (e) => {
+      if (e.code !== 'Space') return;
+      const introEl = document.getElementById('intro');
+      if (!introEl || playBtn.style.display !== 'none') return;
+      e.preventDefault();
+      introVideo.pause();
+      introEl.classList.add('hiding');
+      introEl.addEventListener('transitionend', () => {
+        introEl.remove();
+        setTimeout(() => document.getElementById('hint').classList.add('visible'), 400);
+      }, { once: true });
+    });
+
     introVideo.addEventListener('ended', () => {
       intro.classList.add('hiding');
       intro.addEventListener('transitionend', () => {
